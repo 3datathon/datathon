@@ -1,0 +1,67 @@
+# 알람 발생 횟수와 설비 상태 비교
+cols = [
+    'STATUS.xlsx', 'MAIN_MOTOR_ALM.xlsx', 'TONGS_INVERTER_ALM_ERR_CD.xlsx',
+    'CUTTING_INVERTER_ALM_ERR_CD.xlsx', 'TRANS_INVERTER_ALM_ERR_CD.xlsx',
+    'KO1_MOTOR_INVERTER_ALM.xlsx', 'KO2_MOTOR_INVERTER_ALM.xlsx',
+    'KO3_MOTOR_INVERTER_ALM.xlsx', 'KO4_MOTOR_INVERTER_ALM.xlsx',
+    'KO5_MOTOR_INVERTER_ALM.xlsx', 'KO6_MOTOR_INVERTER_ALM.xlsx'
+]
+
+
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# 해당 컬럼만 추출
+df_selected = df[cols]
+
+# 상관관계 행렬 계산
+corr = df_selected.corr(numeric_only=True)
+
+# 히트맵 시각화
+plt.figure(figsize=(12, 10))
+sns.heatmap(corr, annot=True, fmt=".2f", cmap="coolwarm", linewidths=0.5)
+plt.title("Correlation Heatmap of Inverter Alarm Columns")
+plt.xticks(rotation=45)
+plt.yticks(rotation=0)
+plt.tight_layout()
+plt.show()
+
+
+# --------------------- #
+# STATUS의 값에 따른 각 Alarm 컬럼의 평균
+import seaborn as sns
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_pdf import PdfPages
+
+cols = [
+    'MAIN_MOTOR_ALM.xlsx', 'TONGS_INVERTER_ALM_ERR_CD.xlsx',
+    'CUTTING_INVERTER_ALM_ERR_CD.xlsx', 'TRANS_INVERTER_ALM_ERR_CD.xlsx',
+    'KO1_MOTOR_INVERTER_ALM.xlsx', 'KO2_MOTOR_INVERTER_ALM.xlsx',
+    'KO3_MOTOR_INVERTER_ALM.xlsx', 'KO4_MOTOR_INVERTER_ALM.xlsx',
+    'KO5_MOTOR_INVERTER_ALM.xlsx', 'KO6_MOTOR_INVERTER_ALM.xlsx'
+]
+
+# 하나의 PDF 파일로 열기
+with PdfPages('STATUS_grouped_mean_plots.pdf') as pdf:
+    for col in cols:
+        plt.figure(figsize=(6, 4))
+        ax = sns.barplot(x='STATUS.xlsx', y=col, data=df, estimator='mean', errorbar=None)
+
+        # 평균값 텍스트 표시
+        for bar in ax.patches:
+            height = bar.get_height()
+            ax.text(
+                bar.get_x() + bar.get_width() / 2,
+                height,
+                f'{height:.2f}',
+                ha='center',
+                va='bottom',
+                fontsize=10,
+                color='black'
+            )
+
+        plt.title(f'{col} mean (STATUS.xlsx value grouping)')
+        plt.tight_layout()
+
+        pdf.savefig()  
+        plt.close()    
