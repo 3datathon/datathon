@@ -1,4 +1,9 @@
 # 알람 발생 횟수와 설비 상태 비교
+
+import seaborn as sns
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_pdf import PdfPages
+
 cols = [
     'STATUS.xlsx', 'MAIN_MOTOR_ALM.xlsx', 'TONGS_INVERTER_ALM_ERR_CD.xlsx',
     'CUTTING_INVERTER_ALM_ERR_CD.xlsx', 'TRANS_INVERTER_ALM_ERR_CD.xlsx',
@@ -6,10 +11,6 @@ cols = [
     'KO3_MOTOR_INVERTER_ALM.xlsx', 'KO4_MOTOR_INVERTER_ALM.xlsx',
     'KO5_MOTOR_INVERTER_ALM.xlsx', 'KO6_MOTOR_INVERTER_ALM.xlsx'
 ]
-
-
-import seaborn as sns
-import matplotlib.pyplot as plt
 
 # 해당 컬럼만 추출
 df_selected = df[cols]
@@ -26,14 +27,9 @@ plt.yticks(rotation=0)
 plt.tight_layout()
 plt.show()
 
-
 # --------------------- #
 # STATUS의 값에 따른 각 Alarm 컬럼의 평균
-import seaborn as sns
-import matplotlib.pyplot as plt
-from matplotlib.backends.backend_pdf import PdfPages
-
-cols = [
+cols2 = [
     'MAIN_MOTOR_ALM.xlsx', 'TONGS_INVERTER_ALM_ERR_CD.xlsx',
     'CUTTING_INVERTER_ALM_ERR_CD.xlsx', 'TRANS_INVERTER_ALM_ERR_CD.xlsx',
     'KO1_MOTOR_INVERTER_ALM.xlsx', 'KO2_MOTOR_INVERTER_ALM.xlsx',
@@ -41,13 +37,12 @@ cols = [
     'KO5_MOTOR_INVERTER_ALM.xlsx', 'KO6_MOTOR_INVERTER_ALM.xlsx'
 ]
 
-# 하나의 PDF 파일로 열기
+# PDF 저-장!
 with PdfPages('STATUS_grouped_mean_plots.pdf') as pdf:
-    for col in cols:
+    for col in cols2:
         plt.figure(figsize=(6, 4))
         ax = sns.barplot(x='STATUS.xlsx', y=col, data=df, estimator='mean', errorbar=None)
 
-        # 평균값 텍스트 표시
         for bar in ax.patches:
             height = bar.get_height()
             ax.text(
