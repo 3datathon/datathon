@@ -1,0 +1,43 @@
+# 설비 주파수에 따른 생산량
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+cols = [
+    'STATUS.xlsx', 'OUTPUT_COUNT_SUM.xlsx', 'OUTPUT_COUNT_DAY_1.xlsx', 'OUTPUT_COUNT_DAY_2.xlsx',
+    'MAIN_MOTOR_SET_FREQ.xlsx', 'TONGS_CAST_SET_FREQ.xlsx', 'CUTTING_SET_FREQ.xlsx',
+    'TRANS_SET_FREQ.xlsx','KO1_MOTOR_SET_FREQ.xlsx','KO2_MOTOR_SET_FREQ.xlsx',
+    'KO3_MOTOR_SET_FREQ.xlsx','KO4_MOTOR_SET_FREQ.xlsx','KO5_MOTOR_SET_FREQ.xlsx'
+]
+
+df_selected = df[cols]
+
+# 상관관계
+corr = df_selected.corr(numeric_only=True)
+
+# heatmap
+plt.figure(figsize=(12, 10))
+sns.heatmap(corr, annot=True, fmt=".2f", cmap="coolwarm", linewidths=0.5)
+plt.title("Correlation Heatmap of OUTPUT_FREQ Columns")
+plt.xticks(rotation=45)
+plt.yticks(rotation=0)
+plt.tight_layout()
+plt.show()
+
+# -------------------------- #
+# 주파수와 생산량의 변동 추이
+df['Timestamp'] = pd.to_datetime(df['Timestamp'])
+
+plt.figure(figsize=(15, 6))
+plt.plot(df['Timestamp'], df['OUTPUT_COUNT_SUM.xlsx'], label='Output Count Sum', color='blue', linewidth=2)
+
+# 주파수 컬럼
+freq_cols = [col for col in df.columns if 'FREQ' in col]
+
+for col in freq_cols:
+    plt.plot(df['Timestamp'], df[col], label=col)
+
+plt.title('Production Output and All Frequency Variables Over Time')
+plt.xlabel('Time')
+plt.ylabel('Value')
+plt.legend(loc='upper right', fontsize='small')
+plt.show()
